@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bizerba Service Call Logger</title>
+  <style>
+    :root {
+      --navy: #262D47;
+      --blue: #005AA9;
+      --light: #F4F7FB;
+      --border: #D8DEE9;
+      --danger: #B00020;
+      --success: #0B7A3B;
+      --text: #1E2430;
+      --muted: #667085;
+      --white: #ffffff;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(180deg, var(--navy) 0%, #101525 260px, var(--light) 260px);
+      color: var(--text);
+    }
+
+    .wrap {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 18px;
+    }
+
+    .hero {
+      color: var(--white);
+      padding: 18px 0 24px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo {
+      width: 46px;
+      height: 46px;
+      border-radius: 12px;
+      background: var(--white);
+      display: grid;
+      place-items: center;
+      color: var(--blue);
+      font-weight: 800;
+      letter-spacing: -1px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 25px;
+      line-height: 1.15;
+    }
+
+    .subtitle {
+      margin: 8px 0 0;
+      color: #DDE7F5;
+      font-size: 14px;
+    }
+
+    .card {
+      background: var(--white);
+      border-radius: 18px;
+      box-shadow: 0 16px 45px rgba(16, 24, 40, 0.16);
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,.2);
+    }
+
+    .card-header {
+      padding: 18px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .ticket {
+      font-weight: 700;
+      color: var(--navy);
+      background: #EEF4FF;
+      border: 1px solid #D6E4FF;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 13px;
+    }
+
+    form {
+      padding: 18px;
+    }
+
+    .section {
+      margin-bottom: 22px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section:last-child {
+      border-bottom: 0;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .section-title {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--navy);
+      margin: 0 0 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .full { grid-column: 1 / -1; }
+
+    label {
+      display: block;
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 6px;
+      font-weight: 700;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 13px;
+      font-size: 15px;
+      outline: none;
+      background: #fff;
+      color: var(--text);
+    }
+
+    input:focus, textarea:focus, select:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 4px rgba(0, 90, 169, .12);
+    }
+
+    textarea {
+      min-height: 115px;
+      resize: vertical;
+    }
+
+    .hint {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 7px;
+      line-height: 1.4;
+    }
+
+    .required::after {
+      content: " *";
+      color: var(--danger);
+    }
+
+    .attachments {
+      border: 1px dashed #A9B7D0;
+      border-radius: 14px;
+      background: #FAFCFF;
+      padding: 14px;
+    }
+
+    .preview {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .media-card {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      background: #fff;
+      position: relative;
+    }
+
+    .media-card img, .media-card video {
+      width: 100%;
+      height: 104px;
+      object-fit: cover;
+      display: block;
+      background: #EEF2F7;
+    }
+
+    .media-name {
+      padding: 8px;
+      font-size: 11px;
+      color: var(--muted);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .actions {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      padding: 18px;
+      background: #F8FAFC;
+      border-top: 1px solid var(--border);
+    }
+
+    button, .btn {
+      appearance: none;
+      border: 0;
+      border-radius: 12px;
+      padding: 13px 12px;
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      min-height: 46px;
+    }
+
+    .primary { background: var(--blue); color: white; }
+    .dark { background: var(--navy); color: white; }
+    .success { background: #128C7E; color: white; }
+    .secondary { background: #E7ECF5; color: var(--navy); }
+
+    button:hover, .btn:hover { filter: brightness(.96); }
+
+    .summary {
+      margin-top: 16px;
+      background: #0B1220;
+      color: #E5E7EB;
+      border-radius: 14px;
+      padding: 14px;
+      display: none;
+      white-space: pre-wrap;
+      font-family: Consolas, Monaco, monospace;
+      font-size: 12px;
+      overflow-x: auto;
+    }
+
+    .status {
+      margin: 12px 18px 0;
+      padding: 10px 12px;
+      border-radius: 12px;
+      font-size: 13px;
+      display: none;
+    }
+
+    .status.ok {
+      display: block;
+      background: #ECFDF3;
+      color: var(--success);
+      border: 1px solid #B7E4C7;
+    }
+
+    .status.warn {
+      display: block;
+      background: #FFF8E6;
+      color: #8A5A00;
+      border: 1px solid #FFE0A3;
+    }
+
+    @media (max-width: 720px) {
+      .wrap { padding: 12px; }
+      .grid { grid-template-columns: 1fr; }
+      .actions { grid-template-columns: 1fr; }
+      .card-header { align-items: flex-start; }
+      h1 { font-size: 22px; }
+    }
+
+    @media print {
+      body { background: white; }
+      .hero, .actions, .status { display: none !important; }
+      .card { box-shadow: none; border: 0; }
+      input, textarea, select { border: 0; padding-left: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="hero">
+      <div class="brand">
+        <div class="logo">B</div>
+        <div>
+          <h1>Bizerba Service Call Log</h1>
+          <p class="subtitle">Customer device service call request. - Version 1.01 created by Wendell Trican 2026</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <strong>Service Call Form</strong>
+          <div class="hint">Complete the required fields, attach photos/videos, then send by email or WhatsApp.</div>
+        </div>
+        <div class="ticket" id="ticketNo">Ticket: New</div>
+      </div>
+
+      <div class="status" id="statusBox"></div>
+
+      <form id="serviceForm">
+        <div class="section">
+          <h2 class="section-title">1. Customer Details</h2>
+          <div class="grid">
+            <div>
+              <label class="required" for="companyName">Company Name</label>
+              <input id="companyName" name="companyName" required autocomplete="organization" />
+            </div>
+            <div>
+              <label class="required" for="contactPerson">Contact Person</label>
+              <input id="contactPerson" name="contactPerson" required autocomplete="name" />
+            </div>
+            <div class="full">
+              <label class="required" for="physicalAddress">Physical Address</label>
+              <textarea id="physicalAddress" name="physicalAddress" required autocomplete="street-address"></textarea>
+            </div>
+            <div>
+              <label class="required" for="phone">Phone Number</label>
+              <input id="phone" name="phone" required autocomplete="tel" inputmode="tel" />
+            </div>
+            <div>
+              <label class="required" for="email">Email Address</label>
+              <input id="email" name="email" required autocomplete="email" type="email" />
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <h2 class="section-title">2. Equipment Details</h2>
+          <div class="grid">
+            <div>
+              <label class="required" for="equipmentModel">Bizerba Equipment Model</label>
+              <input id="equipmentModel" name="equipmentModel" required placeholder="e.g. Q1, K-Class, SC II, GLM, KH II" />
+            </div>
+            <div>
+              <label class="required" for="serialNumber">Serial Number</label>
+              <input id="serialNumber" name="serialNumber" required />
+            </div>
+            <div>
+              <label for="priority">Priority</label>
+              <select id="priority" name="priority">
+                <option>Normal</option>
+                <option>Urgent</option>
+                <option>Critical / Production Down</option>
+              </select>
+            </div>
+            <div>
+              <label for="reportedBy">Reported By</label>
+              <input id="reportedBy" name="reportedBy" placeholder="Optional" />
+            </div>
+            <div class="full">
+              <label class="required" for="faultComment">Fault Comment</label>
+              <textarea id="faultComment" name="faultComment" required placeholder="Describe the fault, error message, when it started, and what has already been checked."></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <h2 class="section-title">3. Images & Videos</h2>
+          <div class="attachments">
+            <label for="attachments">Attach Images / Videos</label>
+            <input id="attachments" name="attachments" type="file" accept="image/*,video/*" multiple />
+            <div class="hint">
+              The selected files are previewed here. Browser-only email and WhatsApp cannot automatically attach files, so attach the same files manually when your email or WhatsApp app opens.
+            </div>
+            <div class="preview" id="preview"></div>
+          </div>
+        </div>
+
+        <div class="summary" id="summaryBox"></div>
+      </form>
+
+      <div class="actions">
+        <button class="primary" type="button" onclick="prepareEmail()">Email Service Call</button>
+        <button class="success" type="button" onclick="sendWhatsApp()">WhatsApp Service Call</button>
+        <button class="dark" type="button" onclick="downloadTicket()">Download Ticket</button>
+        <button class="secondary" type="button" onclick="resetForm()">Clear Form</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const EMAIL_TO = "Wendell.Trican@bizerba.com";
+    const WHATSAPP_TO = "27614613082";
+    const form = document.getElementById("serviceForm");
+    const attachmentsInput = document.getElementById("attachments");
+    const preview = document.getElementById("preview");
+    const statusBox = document.getElementById("statusBox");
+    const summaryBox = document.getElementById("summaryBox");
+    const ticketNo = document.getElementById("ticketNo");
+
+    function pad(n) { return String(n).padStart(2, "0"); }
+
+    function generateTicketNo() {
+      const d = new Date();
+      return "BIZ-SVC-" +
+        d.getFullYear() +
+        pad(d.getMonth() + 1) +
+        pad(d.getDate()) + "-" +
+        pad(d.getHours()) +
+        pad(d.getMinutes()) +
+        pad(d.getSeconds());
+    }
+
+    let currentTicket = generateTicketNo();
+    ticketNo.textContent = "Ticket: " + currentTicket;
+
+    function getData() {
+      const fd = new FormData(form);
+      const files = Array.from(attachmentsInput.files || []);
+      return {
+        ticket: currentTicket,
+        dateTime: new Date().toLocaleString(),
+        companyName: (fd.get("companyName") || "").trim(),
+        contactPerson: (fd.get("contactPerson") || "").trim(),
+        physicalAddress: (fd.get("physicalAddress") || "").trim(),
+        phone: (fd.get("phone") || "").trim(),
+        email: (fd.get("email") || "").trim(),
+        equipmentModel: (fd.get("equipmentModel") || "").trim(),
+        serialNumber: (fd.get("serialNumber") || "").trim(),
+        priority: (fd.get("priority") || "").trim(),
+        reportedBy: (fd.get("reportedBy") || "").trim(),
+        faultComment: (fd.get("faultComment") || "").trim(),
+        attachments: files.map(f => ({
+          name: f.name,
+          type: f.type || "unknown",
+          sizeMB: (f.size / 1024 / 1024).toFixed(2) + " MB"
+        }))
+      };
+    }
+
+    function validateForm() {
+      if (!form.reportValidity()) {
+        showStatus("Please complete all required fields before sending.", "warn");
+        return false;
+      }
+      return true;
+    }
+
+    function buildMessage() {
+      const d = getData();
+      const files = d.attachments.length
+        ? d.attachments.map((f, i) => `${i + 1}. ${f.name} (${f.type}, ${f.sizeMB})`).join("\n")
+        : "No images/videos selected.";
+
+      return `BIZERBA SERVICE CALL
+
+Ticket No: ${d.ticket}
+Logged Date/Time: ${d.dateTime}
+Priority: ${d.priority}
+
+CUSTOMER DETAILS
+Company Name: ${d.companyName}
+Contact Person: ${d.contactPerson}
+Physical Address: ${d.physicalAddress}
+Phone Number: ${d.phone}
+Email Address: ${d.email}
+
+EQUIPMENT DETAILS
+Bizerba Equipment Model: ${d.equipmentModel}
+Serial Number: ${d.serialNumber}
+Reported By: ${d.reportedBy || "Not supplied"}
+
+FAULT COMMENT
+${d.faultComment}
+
+ATTACHMENTS SELECTED
+${files}
+
+NOTE:
+Please manually attach the selected images/videos when sending this email or WhatsApp message.`;
+    }
+
+    function showSummary() {
+      const msg = buildMessage();
+      summaryBox.textContent = msg;
+      summaryBox.style.display = "block";
+      return msg;
+    }
+
+    function showStatus(text, type) {
+      statusBox.textContent = text;
+      statusBox.className = "status " + type;
+    }
+
+    function prepareEmail() {
+      if (!validateForm()) return;
+      const msg = showSummary();
+      const subject = encodeURIComponent("Bizerba Service Call - " + currentTicket + " - " + document.getElementById("companyName").value);
+      const body = encodeURIComponent(msg);
+      showStatus("Opening your email app. Remember to manually attach the selected images/videos before sending.", "ok");
+      window.location.href = `mailto:${EMAIL_TO}?subject=${subject}&body=${body}`;
+    }
+
+    function sendWhatsApp() {
+      if (!validateForm()) return;
+      const msg = showSummary();
+      showStatus("Opening WhatsApp. Remember to manually add the selected images/videos if required.", "ok");
+      window.open(`https://wa.me/${WHATSAPP_TO}?text=${encodeURIComponent(msg)}`, "_blank");
+    }
+
+    function downloadTicket() {
+      if (!validateForm()) return;
+      const d = getData();
+      const message = buildMessage();
+      const exportData = {
+        ...d,
+        messageText: message
+      };
+
+      const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = currentTicket + ".json";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      showSummary();
+      showStatus("Ticket downloaded as JSON. Keep this file as a local service record.", "ok");
+    }
+
+    function resetForm() {
+      if (!confirm("Clear the current service call form?")) return;
+      form.reset();
+      preview.innerHTML = "";
+      summaryBox.style.display = "none";
+      statusBox.className = "status";
+      statusBox.textContent = "";
+      currentTicket = generateTicketNo();
+      ticketNo.textContent = "Ticket: " + currentTicket;
+    }
+
+    attachmentsInput.addEventListener("change", function () {
+      preview.innerHTML = "";
+      const files = Array.from(attachmentsInput.files || []);
+
+      files.forEach(file => {
+        const card = document.createElement("div");
+        card.className = "media-card";
+
+        const url = URL.createObjectURL(file);
+        let media;
+
+        if (file.type.startsWith("image/")) {
+          media = document.createElement("img");
+          media.src = url;
+          media.alt = file.name;
+        } else if (file.type.startsWith("video/")) {
+          media = document.createElement("video");
+          media.src = url;
+          media.controls = true;
+        } else {
+          media = document.createElement("div");
+          media.style.height = "104px";
+          media.style.display = "grid";
+          media.style.placeItems = "center";
+          media.textContent = "File";
+        }
+
+        const name = document.createElement("div");
+        name.className = "media-name";
+        name.textContent = file.name;
+
+        card.appendChild(media);
+        card.appendChild(name);
+        preview.appendChild(card);
+      });
+
+      if (files.length) {
+        showStatus(files.length + " attachment(s) selected for preview.", "ok");
+      }
+    });
+  </script>
+</body>
+</html>
